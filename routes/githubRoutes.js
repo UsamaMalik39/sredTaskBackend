@@ -1,6 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const githubController = require('../controllers/githubController');
+const { checkGitHubToken } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -17,10 +18,11 @@ router.get('/status', githubController.checkStatus);
 
 router.delete('/remove', githubController.removeIntegration);
 
-router.get('/logout', githubController.logout);
+router.post('/logout', githubController.logout);
 
-
-router.get('/organizations', githubController.fetchOrganizationsAndRepos);
-router.post('/repo-info', githubController.fetchRepositoryInfo);
+router.get('/organizations', checkGitHubToken, githubController.fetchOrganizationsAndRepos);
+router.post('/repo-info', checkGitHubToken, githubController.fetchRepositoryInfo);
+router.post('/commits', checkGitHubToken, githubController.fetchCommits);
+router.post('/pull-requests', checkGitHubToken, githubController.fetchPullRequests);
 
 module.exports = router;
